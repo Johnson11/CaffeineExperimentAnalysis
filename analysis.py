@@ -1,7 +1,11 @@
 import csv
 from numpy import *
+from matplotlib.pyplot import *
+from scipy import stats
 
 REPETITIONS = 6
+P_BORDER = 0.05
+
 reps = arange(REPETITIONS)
 VPS = []
 
@@ -48,8 +52,37 @@ for VP in VPS:
 	print "Subject ",VP[0], ", Session ",VP[1]+1
 	print "%4s %4s %4s %4s %4s %4s"% (1,2,3,4,5,6)
 	print "%4s %4s %4s %4s %4s %4s" % (VP[2][0],VP[2][1],VP[2][2],VP[2][3],VP[2][4],VP[2][5])
+	print "Mean: ",mean(VP[2])," Std: ",std(VP[2])," Variance: ",var(VP[2])," Median: ",median(VP[2])
 	print
+
+# graphical analysis, Boxplots...
+figure()
+#collect all arrays in one
+hugearray = []
+names = []
+for VP in VPS:
+	hugearray.append(VP[2])
+	names.append(VP[0])
+boxplot(hugearray)
+xticks((1+arange(len(VPS))), names, size='small')
+xlabel("Subject")
+ylabel("Nr of switches")
+
+
 with open('collectedResults.csv', 'w') as fp:
     a = csv.writer(fp, delimiter=',')
     a.writerows(VPS)
+
+# statistical analysis part 2 - comparison of medians
+# It is not normally distributed with just 6 values per person... so we assume it is not normally distributed
+for i,current in enumerate(hugearray):
+	if i%2==0: # just do this every second step
+		f_value, p_value = stats.f_oneway(hugearray[i],hugearray[i+1])
+		if p_value < P_BORDER:
+			print "Significant difference between ",names[i], " and ",names[i+1],". p-value: ",p_value
+		if p_value > P_BORDER:
+			print "No Significance between ",names[i], " and ",names[i+1],". p-value: ",p_value
+
+show()
+
 					
