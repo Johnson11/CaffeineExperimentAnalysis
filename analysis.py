@@ -39,6 +39,17 @@ with open("./CoffeExpTimes", "rb") as file:
 		while pos < 5: # manually set missing fields to zero
 			pos = pos +1 
 			timestorage[pos] = 0
-		print timestorage
-			 
+		# now add the numbers to our tmp array which represents a VP
+		tmp.append(timestorage)
+		# now that we collected all data we can add this tmp VP as a final VP to the VPS array
+		VPS.append(tmp)
+
+for VP in VPS:
+	print "Subject ",VP[0], ", Session ",VP[1]+1
+	print "%4s %4s %4s %4s %4s %4s"% (1,2,3,4,5,6)
+	print "%4s %4s %4s %4s %4s %4s" % (VP[2][0],VP[2][1],VP[2][2],VP[2][3],VP[2][4],VP[2][5])
+	print
+with open('collectedResults.csv', 'w') as fp:
+    a = csv.writer(fp, delimiter=',')
+    a.writerows(VPS)
 					
